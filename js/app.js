@@ -2,7 +2,7 @@ import {
   CATEGORY_CHOICES, CUISINE_CHOICES, OCCASION_CHOICES, NOVELTY_CHOICES, ADVENTURE_CHOICES, DIET_CHOICES, DUELS, CUISINE_CZ, TAG_CZ,
   emptyProfile, newState, next, swipe, undo, priorWeights, reasons, tasteSummary, eligible, km,
 } from './engine.js';
-import { PHOTOS, photoKey, photoSrc } from './photos.js';
+import { photoKey, photoSrc } from './photos.js';
 import { t, lang, setLang, choice, duelText, placesWord, venuesWord, PHOTO_ALT_EN } from './i18n.js';
 
 const PLACES = window.PLACES || [];
@@ -76,6 +76,7 @@ function spires(n) {
 
 // The list authors' own review: rating in spires with its verdict, their note, who tipped them off.
 function reviewHtml(p, compact = false) {
+  if (compact && !p.rating && !p.note) return ''; // in the Saved list an empty review is just noise
   const head = p.rating
     ? `${spires(p.rating)}<b class="review-verdict">${esc(t('spire.' + p.rating))}</b>`
     : p.status === 'want' && !p.note ? `<span class="review-pending">${esc(t('review.notYet'))}</span>` : '';
@@ -99,12 +100,12 @@ function cardHtml(pick, i) {
       <img src="${photoSrc(key)}" alt="${esc(t('card.photoAlt', { x: photoAlt(key) }))}" draggable="false" ${i ? 'loading="lazy"' : ''}>
       <span class="photo-pill">${esc(t('card.illustrative'))}</span>
       ${p.status === 'been' ? `<span class="status-pill">${esc(t('card.been'))}</span>` : p.status === 'want' ? `<span class="status-pill want">${esc(t('card.want'))}</span>` : ''}
-      <div class="photo-name"><h2>${esc(p.name)}</h2></div>
       <span class="stamp stamp-like">${esc(t('stamp.like'))}</span>
       <span class="stamp stamp-nope">${esc(t('stamp.nope'))}</span>
       <span class="stamp stamp-super">${esc(t('stamp.super'))}</span>
     </div>
     <div class="card-body">
+      <h2 class="card-name">${esc(p.name)}</h2>
       <p class="why ${pick.wildcard ? 'wild' : ''}">
         <svg viewBox="0 0 24 24" aria-hidden="true">${pick.wildcard ? '<path d="M4 17l6-6 4 4 6-6M14 9h6v6"/>' : '<path d="M5 12l4 4 10-10"/>'}</svg>
         <span>${pick.wildcard ? esc(t('why.wild')) : why.length ? esc(t('why.match', { x: why.join(' · ') })) : esc(t('why.popular'))}</span>
@@ -276,7 +277,7 @@ function filterChips(pr = S.profile) {
 }
 
 function savedThumb(p) {
-  return photoSrc(photoKey(p)).replace('-960.jpg', '-500.jpg');
+  return photoSrc(photoKey(p));
 }
 
 function renderSide() {
@@ -735,7 +736,6 @@ function switchLang(l) {
   if (l === lang) return;
   setLang(l);
   applyStatic();
-  credits();
   if (S) {
     renderAll();
     route();
@@ -752,15 +752,6 @@ function toast(msg) {
   t.classList.add('show');
   clearTimeout(toastT);
   toastT = setTimeout(() => t.classList.remove('show'), 1800);
-}
-
-async function credits() {
-  try {
-    const c = await (await fetch('assets/img/credits.json')).json();
-    const used = new Set(Object.values(PHOTOS));
-    const list = c.photos.filter((x) => used.has(x.id));
-    $('[data-credits]').innerHTML = esc(t('credits.prefix')) + list.map((x) => `<a href="${esc(x.page)}" rel="noopener">${esc(x.by)}</a> (${esc(x.licence)})`).join(', ') + '.';
-  } catch {}
 }
 
 // ---------- wire up ----------
@@ -870,7 +861,6 @@ window.addEventListener('hashchange', route);
 setLang(lang);
 applyStatic();
 load();
-credits();
 route();
 if (S) {
   renderAll();

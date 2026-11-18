@@ -1,18 +1,12 @@
-// Illustrative food photographs (Wikimedia Commons stand-ins, credits in assets/img/credits.json).
-// They show the TYPE of food, never the specific restaurant. A place gets the photo of its most
-// specific tag, then its cuisine, then its category.
+// Picks the drawing for a place: its most specific tag, then its cuisine, then its category.
 
-const BIG = { f1753815: 0, f202779303: 0, f70249695: 0 }; // only a 500px file exists for these
-const file = (id) => (id in BIG ? `assets/img/photo-${id}-500.jpg` : `assets/img/photo-${id}-960.jpg`);
-
-export const PHOTOS = {
-  ramen: 'f100562279', sushi: 'f1753815', pizza: 'f70249695', pasta: 'f50109961', burger: 'f2139366',
-  tacos: 'f32052457', dumplings: 'f154904126', chicken: 'f145129287', steak: 'f81716182', czech: 'f24560219',
-  beer: 'f158749173', cocktail: 'f82869794', wine: 'f25757130', coffee: 'f70214600', pastry: 'f124303045',
-  cake: 'f97953393', brunch: 'f202779303', seafood: 'f486648', tapas: 'f120642628', fine: 'f202369590',
-  hotpot: 'f117819763', curry: 'f3031790', pho: 'f131725676', hummus: 'f29254279', grill: 'f42529297',
-  sichuan: 'f50866352', sandwich: 'f100885885', salad: 'f96891595', kbbq: 'f8535420', noodles: 'f10600547',
-  dosa: 'f149836648', schnitzel: 'f163369357',
+// Drawn illustrations (scripts/draw-food.mjs). Several food types share one drawing.
+const ILLU = {
+  ramen: 'noodles', pho: 'noodles', noodles: 'noodles', sushi: 'sushi', pizza: 'pizza', pasta: 'pasta', burger: 'burger',
+  chicken: 'burger', tacos: 'tacos', sandwich: 'sandwich', dumplings: 'dumplings', steak: 'steak', grill: 'steak', kbbq: 'steak',
+  czech: 'czech', schnitzel: 'czech', beer: 'beer', cocktail: 'cocktail', wine: 'wine', coffee: 'coffee', pastry: 'pastry',
+  cake: 'cake', brunch: 'brunch', seafood: 'seafood', tapas: 'tapas', fine: 'fine', hotpot: 'hotpot', sichuan: 'hotpot',
+  curry: 'curry', dosa: 'curry', hummus: 'salad', salad: 'salad',
 };
 
 const BY_TAG = [
@@ -52,4 +46,4 @@ export function photoKey(p) {
   return BY_CUISINE[p.cuisine] || 'tapas';
 }
 
-export const photoSrc = (key) => file(PHOTOS[key] || PHOTOS.tapas);
+export const photoSrc = (key) => `assets/illustrations/${ILLU[key] || 'tapas'}.svg`;
