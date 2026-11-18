@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="cs" data-type="software" data-radius="round">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prague Eats Swipe</title>
+<link rel="alternate" hreflang="cs" href="https://matyasbruna05-debug.github.io/prague-eats-swipe/?lang=cs">
+<link rel="alternate" hreflang="en" href="https://matyasbruna05-debug.github.io/prague-eats-swipe/?lang=en">
+<meta name="description" content="Swipuj pražské podniky jako na Tinderu. Appka se z každého swipu učí, na co máš chuť, a nabízí čím dál přesnější tipy.">
+<meta name="page-type" content="software">
+<meta name="site-kind" content="software">
+<meta name="theme-color" content="#fff6ea">
+<meta property="og:title" content="Prague Eats Swipe">
+<meta property="og:description" content="Swipuj pražské podniky. Appka se učí, na co máš chuť.">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<!-- taste-skill deal: type geist, radius round. Palette: the dealt green-mat-chocolate replaced on the user's request with appetite colours (tomato, mustard, orange on cream). App, not a landing page. -->
+<a class="skip" href="#main" data-i18n="skip">Přeskočit na obsah</a>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#swipe" data-tab="swipe" aria-label="Prague Eats Swipe, úvod" data-i18n-aria="brand.aria">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--like)"/><path d="M10 22V10h6.5a4 4 0 0 1 0 8H10" fill="none" stroke="#fff6ea" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="22.5" cy="22" r="2.2" fill="var(--super)"/></svg>
+      <span>Prague Eats <b>Swipe</b></span>
+    </a>
+    <nav class="tabs" aria-label="Sekce" data-i18n-aria="nav.aria">
+      <a href="#swipe" data-tab="swipe"><span data-i18n="nav.swipe">Objevuj</span></a>
+      <a href="#saved" data-tab="saved"><span data-i18n="nav.saved">Uložené</span> <span class="count" data-saved-count>0</span></a>
+      <a href="#taste" data-tab="taste"><span data-i18n="nav.taste">Můj vkus</span></a>
+    </nav>
+    <button class="lang-btn" type="button" data-lang-toggle aria-label="Switch to English" data-i18n-aria="lang.switch"><span data-lang-label>EN</span></button>
+    <div class="radius">
+      <button class="radius-btn" type="button" data-radius-btn aria-expanded="false" aria-controls="radius-panel">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>
+        <span data-radius-label>Celá Praha</span>
+      </button>
+      <div class="radius-panel" id="radius-panel" data-radius-panel hidden>
+        <p class="radius-title" data-i18n="radius.title">Okruh od tebe</p>
+        <p class="radius-status" data-loc-status>Zjišťuju polohu…</p>
+        <label class="radius-range" for="radius-input">
+          <span><span data-i18n="radius.upTo">Do</span> <b data-radius-value>3 km</b></span>
+          <input id="radius-input" type="range" min="0.5" max="10" step="0.5" value="3" data-radius-input>
+        </label>
+        <div class="radius-presets" role="group" aria-label="Rychlá volba okruhu" data-i18n-aria="radius.presets">
+          <button type="button" data-radius-preset="1">1 km</button>
+          <button type="button" data-radius-preset="3">3 km</button>
+          <button type="button" data-radius-preset="5">5 km</button>
+          <button type="button" data-radius-preset="0" data-i18n="radius.allPrague">Celá Praha</button>
+        </div>
+        <p class="radius-count" data-radius-count></p>
+        <button class="link-btn" type="button" data-loc-retry hidden data-i18n="radius.retry">Zkusit polohu znovu</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <!-- Swipe -->
+  <section class="view view-swipe" id="swipe" data-view="swipe" aria-label="Objevuj" data-i18n-aria="nav.swipe">
+    <aside class="side side-left" aria-label="Tvůj vkus zatím" data-i18n-aria="side.taste">
+      <h2 data-i18n="side.taste">Tvůj vkus zatím</h2>
+      <div data-taste-mini></div>
+      <div class="filters" data-filters></div>
+      <button class="btn btn-ghost" type="button" data-edit-prefs data-i18n="prefs.edit">Upravit preference</button>
+    </aside>
+
+    <div class="deck-wrap">
+      <div class="deck" data-deck aria-live="polite"></div>
+      <div class="actions" role="group" aria-label="Ovládání karty" data-i18n-aria="act.group">
+        <button class="act act-undo" type="button" data-act="undo" aria-label="Vrátit poslední swipe (Z)" title="Vrátit (Z)" data-i18n-aria="act.undo" data-i18n-title="act.undoTitle">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+        </button>
+        <button class="act act-nope" type="button" data-act="nope" aria-label="Nechci (šipka doleva)" title="Nechci (←)" data-i18n-aria="act.nope" data-i18n-title="act.nopeTitle">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+        <button class="act act-super" type="button" data-act="super" aria-label="Top tip (šipka nahoru)" title="Top (↑)" data-i18n-aria="act.super" data-i18n-title="act.superTitle">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>
+        </button>
+        <button class="act act-like" type="button" data-act="like" aria-label="Chci (šipka doprava)" title="Chci (→)" data-i18n-aria="act.like" data-i18n-title="act.likeTitle">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.5 2.8C19.5 15.4 12 20 12 20z"/></svg>
+        </button>
+        <button class="act act-info" type="button" data-act="info" aria-label="Podrobnosti o podniku (mezerník)" title="Detail (mezerník)" data-i18n-aria="act.info" data-i18n-title="act.infoTitle">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>
+        </button>
+      </div>
+      <p class="hint" data-i18n-html="hint">Táhni kartu doprava <b>chci</b>, doleva <b>ne</b>, nahoru <b>top</b>. Na klávesnici šipky.</p>
+    </div>
+
+    <aside class="side side-right" aria-label="Naposledy uložené" data-i18n-aria="side.savedAria">
+      <h2 data-i18n="side.saved">Naposledy uložené</h2>
+      <ol class="mini-saved" data-saved-mini></ol>
+      <a class="btn btn-ghost" href="#saved" data-tab="saved" data-i18n="side.savedAll">Všechna uložená</a>
+    </aside>
+  </section>
+
+  <!-- Saved -->
+  <section class="view view-saved" id="saved" data-view="saved" aria-labelledby="saved-h" hidden>
+    <div class="page">
+      <div class="page-head">
+        <h1 id="saved-h" data-i18n="saved.title">Uložená místa</h1>
+        <div class="seg" role="group" aria-label="Filtr uložených" data-i18n-aria="saved.filterAria">
+          <button type="button" class="on" data-saved-filter="all" data-i18n="saved.all">Všechna</button>
+          <button type="button" data-saved-filter="super" data-i18n="saved.super">Jen top</button>
+        </div>
+      </div>
+      <ul class="saved-list" data-saved-list></ul>
+      <div class="export-box">
+        <div>
+          <h2 data-i18n="export.title">Mít uložená místa v Mapách Google</h2>
+          <p data-i18n-html="export.text">Google nedovoluje appkám zapisovat do tvých seznamů v Mapách. Máš dvě cesty zdarma: u místa klepni na <b>Uložit v Mapách</b> a v Mapách na Uložit. Nebo stáhni všechna najednou a nahraj je do <a href="https://www.google.com/maps/d/" target="_blank" rel="noopener">Google My Maps</a> (Vytvořit mapu, Importovat). Mapa se ti pak ukáže i v appce Mapy Google v sekci Uložené, Mapy.</p>
+        </div>
+        <button class="btn btn-primary" type="button" data-export-kml data-i18n="export.btn">Stáhnout pro Google My Maps</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Taste -->
+  <section class="view view-taste" id="taste" data-view="taste" aria-labelledby="taste-h" hidden>
+    <div class="page">
+      <div class="page-head">
+        <h1 id="taste-h" data-i18n="taste.title">Můj vkus</h1>
+      </div>
+      <div class="taste-grid">
+        <div class="panel">
+          <h2 data-i18n="taste.likes">Co ti chutná</h2>
+          <div data-taste-likes></div>
+        </div>
+        <div class="panel">
+          <h2 data-i18n="taste.dislikes">Co spíš ne</h2>
+          <div data-taste-dislikes></div>
+        </div>
+        <div class="panel">
+          <h2 data-i18n="taste.stats">Statistika</h2>
+          <dl class="stats" data-stats></dl>
+        </div>
+        <div class="panel">
+          <h2 data-i18n="taste.settings">Tvoje nastavení</h2>
+          <div class="filters" data-filters-full></div>
+          <div class="row-btns">
+            <button class="btn btn-primary" type="button" data-edit-prefs data-i18n="prefs.edit">Upravit preference</button>
+            <button class="btn btn-ghost" type="button" data-reset data-i18n="taste.reset">Začít úplně znovu</button>
+          </div>
+        </div>
+      </div>
+      <p class="about" data-i18n-html="about">Jak to funguje: každý podnik má vlastnosti (kuchyně, typ jídla, příležitost, čtvrť). Odpovědi z úvodu jim nastaví počáteční váhu a každý swipe ji posune: „chci“ nahoru, „ne“ dolů, „top“ dvakrát víc. Další karta je ta s nejvyšším skóre, s trochou náhody a občas s divokou kartou mimo tvůj profil, ať se appka nezasekne na jedné kuchyni. Data: seznam <a href="https://prague-eats-au.web.app" rel="noopener">Prague Eats</a>, 274 podniků. Fotky jsou ilustrační podle typu jídla, ne z konkrétního podniku.</p>
+      <p class="credits" data-credits></p>
+    </div>
+  </section>
+</main>
+
+<nav class="bottom-tabs" aria-label="Sekce" data-i18n-aria="nav.aria">
+  <a href="#swipe" data-tab="swipe"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M9 8h6"/></svg><span data-i18n="nav.swipe">Objevuj</span></a>
+  <a href="#saved" data-tab="saved"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.5 2.8C19.5 15.4 12 20 12 20z"/></svg><span data-i18n="nav.saved">Uložené</span> <span class="count" data-saved-count>0</span></a>
+  <a href="#taste" data-tab="taste"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M7 15V9M12 15V5M17 15v-3"/></svg><span data-i18n="nav.taste">Můj vkus</span></a>
+</nav>
+
+<!-- Onboarding: short Duolingo-style quiz -->
+<div class="onb" data-onb hidden role="dialog" aria-modal="true" aria-labelledby="onb-title">
+  <div class="onb-in">
+    <div class="onb-top" data-onb-top>
+      <button class="icon-btn" type="button" data-onb-back aria-label="Zpět" data-i18n-aria="onb.back">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div class="progress" aria-hidden="true"><span data-onb-progress></span></div>
+      <button class="link-btn" type="button" data-onb-skip data-i18n="onb.skip">Přeskočit</button>
+    </div>
+    <div class="onb-body" data-onb-body></div>
+  </div>
+  <div class="onb-foot" data-onb-foot>
+    <div class="onb-foot-in">
+      <p class="onb-msg" data-onb-msg role="status" aria-live="polite"></p>
+      <button class="btn btn-chunky" type="button" data-onb-next>Pokračovat</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" data-toast role="status" aria-live="polite"></div>
+
+<script src="data/places.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
